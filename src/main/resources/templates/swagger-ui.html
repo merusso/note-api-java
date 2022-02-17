@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="//unpkg.com/swagger-ui-dist@4.5/swagger-ui-standalone-preset.js"></script>
+    <script src="//unpkg.com/swagger-ui-dist@4.5/swagger-ui-bundle.js"></script>
+    <link rel="stylesheet" href="//unpkg.com/swagger-ui-dist@4.5/swagger-ui.css" />
+    <title>Swagger UI</title>
+</head>
+<body>
+<div id="swagger-ui"></div>
+<script th:inline="javascript">
+    // Docs: https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
+    window.onload = function() {
+        SwaggerUIBundle({
+            // Thymeleaf JS "natural template" so this page works both when
+            // hosted from the server and as a static template.
+            // See: https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#javascript-inlining
+            url: /*[[@{note-api.yaml}]]*/ "../static/note-api.yaml",
+            dom_id: '#swagger-ui',
+            supportedSubmitMethods: []
+        })
+    }
+</script>
+</body>
+</html>
