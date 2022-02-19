@@ -2,7 +2,7 @@
 openapi: '3.0.3'
 info:
   title: Note API
-  version: '0.0.2'
+  version: '0.0.3'
 servers:
   - url: http://localhost:8080
     description: local
@@ -243,7 +243,7 @@ components:
           type: string
           format: date-time
           example: '2022-02-14T01:02:03Z'
-        labels:
+        noteLabels:
           type: array
           format: string
           example: [favorites,vacations]
