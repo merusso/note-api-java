@@ -2,7 +2,9 @@ package com.example.noteapi.api;
 
 import com.example.noteapi.service.NoteNotFoundException;
 import com.example.noteapi.service.NoteService;
+import static org.hamcrest.Matchers.*;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -76,6 +78,23 @@ class NoteControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(content().json(json));
+    }
+
+    @Test
+    void getNote_notFound() throws Exception {
+        when(noteService.get(1)).thenThrow(new NoteNotFoundException(1));
+
+        String json = """
+            {
+                "type": "NoteNotFoundException",
+                "status": 404,
+                "detail": "Note with ID 1 not found"
+            }""";
+        mockMvc.perform(get("/notes/1"))
+            .andExpect(status().isNotFound())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(json))
+            .andExpect(jsonPath("instance", instanceOf(String.class)));
     }
 
     @Test
