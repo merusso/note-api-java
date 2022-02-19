@@ -1,5 +1,6 @@
 package com.example.noteapi.api;
 
+import com.example.noteapi.service.NoteNotFoundException;
 import com.example.noteapi.service.NoteService;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
@@ -29,7 +30,7 @@ class NoteControllerTest {
     NoteService noteService;
 
     @Test
-    void create() throws Exception {
+    void createNote() throws Exception {
         when(noteService.create(any())).thenReturn(note());
 
         String requestJson = """
@@ -78,7 +79,7 @@ class NoteControllerTest {
     }
 
     @Test
-    void update() throws Exception {
+    void updateNote() throws Exception {
         Note note = note();
         when(noteService.update(note)).thenReturn(note);
 
