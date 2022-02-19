@@ -27,7 +27,7 @@ public class NoteController {
     }
 
     @PutMapping("{id}")
-    public Note update(@RequestBody @Valid Note note) {
+    public Note update(@PathVariable long id, @RequestBody @Valid Note note) {
         return noteService.update(note);
     }
 
