@@ -4,6 +4,8 @@ import com.example.noteapi.service.NoteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("notes")
 public class NoteController {
@@ -15,7 +17,7 @@ public class NoteController {
     }
 
     @PostMapping
-    public Note create(@RequestBody Note note) {
+    public Note create(@RequestBody @Valid Note note) {
         return noteService.create(note);
     }
 
@@ -25,7 +27,7 @@ public class NoteController {
     }
 
     @PutMapping("{id}")
-    public Note update(@RequestBody Note note) {
+    public Note update(@RequestBody @Valid Note note) {
         return noteService.update(note);
     }
 

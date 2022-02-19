@@ -61,6 +61,36 @@ class NoteControllerTest {
     }
 
     @Test
+    void createNote_invalidRequest() throws Exception {
+        String requestJson = """
+            {
+                "userId": 2,
+                "title": "",
+                "labels": ["label-1", "label-2"]
+            }""";
+        String responseJson = """
+            {
+                "type": "MethodArgumentNotValidException",
+                "status": 400,
+                "detail": "Validation errors: [ValidationErrorItem(field=content, message=must not be null), ValidationErrorItem(field=title, message=must not be empty)]",
+                "validationErrors": [{
+                    "field": "content",
+                    "message": "must not be null"
+                }, {
+                    "field": "title",
+                    "message": "must not be empty"
+                }]
+            }""";
+        mockMvc.perform(post("/notes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(responseJson))
+            .andExpect(jsonPath("instance", instanceOf(String.class)));
+    }
+
+    @Test
     void getNote() throws Exception {
         when(noteService.get(1)).thenReturn(note());
 
