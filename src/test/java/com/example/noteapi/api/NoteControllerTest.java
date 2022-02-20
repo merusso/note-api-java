@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -166,7 +165,7 @@ class NoteControllerTest {
         note.setId(1L);
         note.setUserId(2L);
         note.setTitle("Title");
-        note.setContent("Content".getBytes(StandardCharsets.UTF_8)); // Q29udGVudA==
+        note.setContent("Content"); // Q29udGVudA==
         note.setCreatedDate(date);
         note.setUpdatedDate(date);
         note.setLabels(List.of("label-1", "label-2"));

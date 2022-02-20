@@ -3,7 +3,6 @@ package com.example.noteapi.service;
 import com.example.noteapi.api.Note;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +19,7 @@ public class NoteServiceFake implements NoteService {
         note.setId(idGenerator.incrementAndGet());
         note.setUserId(1L);
         note.setTitle("Title");
-        note.setContent("Content".getBytes(StandardCharsets.UTF_8));
+        note.setContent("Content");
         note.setCreatedDate(Instant.now());
         note.setUpdatedDate(Instant.now());
         note.setLabels(List.of("label-1", "label-2"));
