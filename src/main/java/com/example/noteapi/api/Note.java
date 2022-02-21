@@ -1,9 +1,5 @@
 package com.example.noteapi.api;
 
-import com.example.noteapi.json.Base64ToStringConverter;
-import com.example.noteapi.json.StringToBase64Converter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -18,9 +14,7 @@ public class Note {
     private Long userId;
     @NotEmpty
     private String title;
-    @NotNull
-    @JsonDeserialize(converter = Base64ToStringConverter.class)
-    @JsonSerialize(converter = StringToBase64Converter.class)
+    @NotEmpty
     private String content;
     private Instant createdDate;
     private Instant updatedDate;

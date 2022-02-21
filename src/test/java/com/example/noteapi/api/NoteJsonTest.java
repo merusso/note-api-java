@@ -13,48 +13,32 @@ class NoteJsonTest {
     @Autowired
     JacksonTester<Note> tester;
 
-    /**
-     * These tests verify custom serialization for Note.content property.
-     * The API interface expects a base64-encoded string, but api.Note holds
-     * the raw String value.
-     */
     @Nested
     class ContentTest {
         @Test
-        void deserialize() throws Exception {
-            var json = """
-            {
-                "content": "VGhpcyBpcyBhIHRlc3Q="
-            }
-            """;
-            assertThat(tester.parseObject(json))
-                .hasFieldOrPropertyWithValue("content", "This is a test");
-        }
-
-        @Test
         void deserialize_multiLine() throws Exception {
-            var json = """
-            {
-                "content": "TXVsdGktbGluZSBzdHJpbmcgdGVzdDoKbGluZTEKbGluZTIKbGluZTMK"
-            }
-            """;
             var expectedString = """
-            Multi-line string test:
-            line1
-            line2
-            line3
+            # Header
+            
+            * list item 1
+            * list item 2
             """;
-            assertThat(tester.parseObject(json))
+            assertThat(tester.read("/NoteJsonTest/content-multiline.json"))
                 .hasFieldOrPropertyWithValue("content", expectedString);
         }
 
         @Test
-        void serialize() throws Exception {
+        void serialize_multiLine() throws Exception {
             Note note = new Note();
-            note.setContent("This is a test");
+            var content = """
+            # Header
+            
+            * list item 1
+            * list item 2
+            """;
+            note.setContent(content);
             assertThat(tester.write(note))
-                .extractingJsonPathStringValue("content")
-                .isEqualTo("VGhpcyBpcyBhIHRlc3Q=");
+                .isEqualToJson("/NoteJsonTest/content-multiline.json");
         }
     }
 }

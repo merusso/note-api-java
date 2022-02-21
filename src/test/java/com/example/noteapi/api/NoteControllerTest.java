@@ -38,7 +38,7 @@ class NoteControllerTest {
             {
                 "userId": 2,
                 "title": "Title",
-                "content": "Q29udGVudA==",
+                "content": "Content",
                 "labels": ["label-1", "label-2"]
             }""";
         String responseJson = """
@@ -46,7 +46,7 @@ class NoteControllerTest {
                 "id": 1,
                 "userId": 2,
                 "title": "Title",
-                "content": "Q29udGVudA==",
+                "content": "Content",
                 "createdDate": "2022-02-18T18:00:00Z",
                 "updatedDate": "2022-02-18T18:00:00Z",
                 "labels": ["label-1", "label-2"]
@@ -63,21 +63,20 @@ class NoteControllerTest {
     void createNote_invalidRequest() throws Exception {
         String requestJson = """
             {
-                "userId": 2,
-                "title": "",
+                "title": "Title",
                 "labels": ["label-1", "label-2"]
             }""";
         String responseJson = """
             {
                 "type": "MethodArgumentNotValidException",
                 "status": 400,
-                "detail": "Validation errors: [ValidationErrorItem(field=content, message=must not be null), ValidationErrorItem(field=title, message=must not be empty)]",
+                "detail": "Validation errors: [ValidationErrorItem(field=content, message=must not be empty), ValidationErrorItem(field=userId, message=must not be null)]",
                 "validationErrors": [{
                     "field": "content",
-                    "message": "must not be null"
-                }, {
-                    "field": "title",
                     "message": "must not be empty"
+                }, {
+                    "field": "userId",
+                    "message": "must not be null"
                 }]
             }""";
         mockMvc.perform(post("/notes")
@@ -98,7 +97,7 @@ class NoteControllerTest {
                 "id": 1,
                 "userId": 2,
                 "title": "Title",
-                "content": "Q29udGVudA==",
+                "content": "Content",
                 "createdDate": "2022-02-18T18:00:00Z",
                 "updatedDate": "2022-02-18T18:00:00Z",
                 "labels": ["label-1", "label-2"]
@@ -136,7 +135,7 @@ class NoteControllerTest {
                 "id": 1,
                 "userId": 2,
                 "title": "Title",
-                "content": "Q29udGVudA==",
+                "content": "Content",
                 "createdDate": "2022-02-18T18:00:00Z",
                 "updatedDate": "2022-02-18T18:00:00Z",
                 "labels": ["label-1", "label-2"]
@@ -165,7 +164,7 @@ class NoteControllerTest {
         note.setId(1L);
         note.setUserId(2L);
         note.setTitle("Title");
-        note.setContent("Content"); // Q29udGVudA==
+        note.setContent("Content");
         note.setCreatedDate(date);
         note.setUpdatedDate(date);
         note.setLabels(List.of("label-1", "label-2"));
