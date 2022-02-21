@@ -21,7 +21,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-@WebMvcTest
+@WebMvcTest(controllers = NoteController.class)
 class NoteControllerTest {
 
     @Autowired
@@ -152,6 +152,7 @@ class NoteControllerTest {
     void deleteNote() throws Exception {
         mockMvc.perform(delete("/notes/1"))
             .andExpect(status().isNoContent());
+        verify(noteService).delete(1);
     }
 
     private Note note() {
