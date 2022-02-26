@@ -36,15 +36,15 @@ class NoteControllerTest {
 
         String requestJson = """
             {
-                "userId": 2,
+                "userId": "2",
                 "title": "Title",
                 "content": "Content",
                 "labels": ["label-1", "label-2"]
             }""";
         String responseJson = """
             {
-                "id": 1,
-                "userId": 2,
+                "id": "1",
+                "userId": "2",
                 "title": "Title",
                 "content": "Content",
                 "createdDate": "2022-02-18T18:00:00Z",
@@ -90,12 +90,12 @@ class NoteControllerTest {
 
     @Test
     void getNote() throws Exception {
-        when(noteService.get(1)).thenReturn(note());
+        when(noteService.get("1")).thenReturn(note());
 
         String json = """
             {
-                "id": 1,
-                "userId": 2,
+                "id": "1",
+                "userId": "2",
                 "title": "Title",
                 "content": "Content",
                 "createdDate": "2022-02-18T18:00:00Z",
@@ -110,7 +110,7 @@ class NoteControllerTest {
 
     @Test
     void getNote_notFound() throws Exception {
-        when(noteService.get(1)).thenThrow(new NoteNotFoundException(1));
+        when(noteService.get("1")).thenThrow(new NoteNotFoundException("1"));
 
         String json = """
             {
@@ -132,8 +132,8 @@ class NoteControllerTest {
 
         String json = """
             {
-                "id": 1,
-                "userId": 2,
+                "id": "1",
+                "userId": "2",
                 "title": "Title",
                 "content": "Content",
                 "createdDate": "2022-02-18T18:00:00Z",
@@ -152,7 +152,7 @@ class NoteControllerTest {
     void deleteNote() throws Exception {
         mockMvc.perform(delete("/notes/1"))
             .andExpect(status().isNoContent());
-        verify(noteService).delete(1);
+        verify(noteService).delete("1");
     }
 
     private Note note() {
@@ -162,8 +162,8 @@ class NoteControllerTest {
                 ZoneId.of("US/Central"))
             .toInstant();
         Note note = new Note();
-        note.setId(1L);
-        note.setUserId(2L);
+        note.setId("1");
+        note.setUserId("2");
         note.setTitle("Title");
         note.setContent("Content");
         note.setCreatedDate(date);

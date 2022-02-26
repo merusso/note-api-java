@@ -4,7 +4,7 @@ import com.example.noteapi.api.Note;
 
 public interface NoteService {
     Note create(Note note);
-    Note get(long id);
+    Note get(String id);
     Note update(Note note);
-    void delete(long id);
+    void delete(String id);
 }

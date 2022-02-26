@@ -28,18 +28,18 @@ public class NoteController {
     }
 
     @GetMapping("{id}")
-    public Note get(@PathVariable long id) {
+    public Note get(@PathVariable String id) {
         return noteService.get(id);
     }
 
     @PutMapping("{id}")
-    public Note update(@PathVariable long id, @RequestBody @Valid Note note) {
+    public Note update(@PathVariable String id, @RequestBody @Valid Note note) {
         return noteService.update(note);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable long id) {
+    public void delete(@PathVariable String id) {
         noteService.delete(id);
     }
 }

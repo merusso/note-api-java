@@ -10,13 +10,14 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class UserServiceFake implements UserService {
 
     private AtomicLong idGenerator = new AtomicLong();
-    private HashMap<Long, User> users = new HashMap<>();
+    private HashMap<String, User> users = new HashMap<>();
 
     {
         Instant date = ZonedDateTime.of(
@@ -25,7 +26,7 @@ public class UserServiceFake implements UserService {
                 ZoneId.of("US/Central"))
             .toInstant();
         User user = new User();
-        user.setId(1L);
+        user.setId("1");
         user.setName("ndrake");
         user.setJoinDate(date);
         user.setNoteLabels(List.of("favorites", "vacations"));
@@ -34,13 +35,13 @@ public class UserServiceFake implements UserService {
 
     @Override
     public User create(User user) {
-        user.setId(idGenerator.incrementAndGet());
+        user.setId(Objects.toString(idGenerator.incrementAndGet()));
         users.put(user.getId(), user);
         return user;
     }
 
     @Override
-    public User get(long id) {
+    public User get(String id) {
         if (!users.containsKey(id)) {
             throw new NoteNotFoundException(id);
         }
@@ -49,7 +50,7 @@ public class UserServiceFake implements UserService {
 
     @Override
     public User update(User user) {
-        Long id = user.getId();
+        String id = user.getId();
         if (!users.containsKey(id)) {
             throw new NoteNotFoundException(id);
         }
@@ -58,7 +59,7 @@ public class UserServiceFake implements UserService {
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(String id) {
         if (!users.containsKey(id)) {
             throw new NoteNotFoundException(id);
         }

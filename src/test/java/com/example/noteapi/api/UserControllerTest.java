@@ -41,7 +41,7 @@ class UserControllerTest {
             """;
         String responseJson = """
             {
-                "id": 1,
+                "id": "1",
                 "name": "ndrake",
                 "joinDate": "2022-02-18T18:00:00Z"
             }
@@ -81,11 +81,11 @@ class UserControllerTest {
 
     @Test
     void getUser() throws Exception {
-        when(userService.get(1)).thenReturn(user());
+        when(userService.get("1")).thenReturn(user());
 
         String json = """
             {
-                "id": 1,
+                "id": "1",
                 "name": "ndrake",
                 "joinDate": "2022-02-18T18:00:00Z",
                 "noteLabels": ["favorites", "vacations"]
@@ -98,7 +98,7 @@ class UserControllerTest {
 
     @Test
     void getUser_notFound() throws Exception {
-        when(userService.get(1)).thenThrow(new UserNotFoundException(1));
+        when(userService.get("1")).thenThrow(new UserNotFoundException("1"));
 
         String json = """
             {
@@ -118,7 +118,7 @@ class UserControllerTest {
 
         String json = """
             {
-                "id": 1,
+                "id": "1",
                 "name": "ndrake",
                 "joinDate": "2022-02-18T18:00:00Z",
                 "noteLabels": ["favorites", "vacations"]
@@ -135,7 +135,7 @@ class UserControllerTest {
     void deleteUser() throws Exception {
         mockMvc.perform(delete("/users/1"))
             .andExpect(status().isOk());
-        verify(userService).delete(1);
+        verify(userService).delete("1");
     }
 
     private User user() {
@@ -145,7 +145,7 @@ class UserControllerTest {
                 ZoneId.of("US/Central"))
             .toInstant();
         User user = new User();
-        user.setId(1L);
+        user.setId("1");
         user.setName("ndrake");
         user.setJoinDate(date);
         user.setNoteLabels(List.of("favorites", "vacations"));

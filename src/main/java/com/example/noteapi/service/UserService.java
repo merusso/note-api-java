@@ -4,7 +4,7 @@ import com.example.noteapi.api.User;
 
 public interface UserService {
     User create(User user);
-    User get(long id);
+    User get(String id);
     User update(User user);
-    void delete(long id);
+    void delete(String id);
 }

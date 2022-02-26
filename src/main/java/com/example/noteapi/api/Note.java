@@ -9,9 +9,9 @@ import java.util.List;
 
 @Data
 public class Note {
-    private Long id;
+    private String id;
     @NotNull
-    private Long userId;
+    private String userId;
     @NotEmpty
     private String title;
     @NotEmpty

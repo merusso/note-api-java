@@ -6,18 +6,19 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class NoteServiceFake implements NoteService {
 
     private AtomicLong idGenerator = new AtomicLong();
-    private HashMap<Long, Note> notes = new HashMap<>();
+    private HashMap<String, Note> notes = new HashMap<>();
 
     {
         Note note = new Note();
-        note.setId(idGenerator.incrementAndGet());
-        note.setUserId(1L);
+        note.setId(Objects.toString(idGenerator.incrementAndGet()));
+        note.setUserId("1");
         note.setTitle("Title");
         note.setContent("Content");
         note.setCreatedDate(Instant.now());
@@ -28,13 +29,13 @@ public class NoteServiceFake implements NoteService {
 
     @Override
     public Note create(Note note) {
-        note.setId(idGenerator.incrementAndGet());
+        note.setId(Objects.toString(idGenerator.incrementAndGet()));
         notes.put(note.getId(), note);
         return note;
     }
 
     @Override
-    public Note get(long id) {
+    public Note get(String id) {
         if (!notes.containsKey(id)) {
             throw new NoteNotFoundException(id);
         }
@@ -43,7 +44,7 @@ public class NoteServiceFake implements NoteService {
 
     @Override
     public Note update(Note note) {
-        Long id = note.getId();
+        String id = note.getId();
         if (!notes.containsKey(id)) {
             throw new NoteNotFoundException(id);
         }
@@ -52,7 +53,7 @@ public class NoteServiceFake implements NoteService {
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(String id) {
         if (!notes.containsKey(id)) {
             throw new NoteNotFoundException(id);
         }
