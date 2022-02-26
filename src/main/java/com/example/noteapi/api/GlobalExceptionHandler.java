@@ -30,23 +30,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(
-            Exception ex,
-            Object body,
-            HttpHeaders headers,
-            HttpStatus status, WebRequest request) {
-
-        ApiError apiError = ApiError.builder()
-            .type(ex.getClass().getSimpleName())
-//            .title(ex.getClass().getSimpleName())
-            .status(status.value())
-            .detail(ex.getMessage())
-            .instance(UUID.randomUUID().toString())
-            .build();
+            Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        logServerError(ex, status, request);
+        ApiError apiError = createApiError(ex, status);
         return new ResponseEntity<>(apiError, status);
     }
 
     @Override
-    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleBindException(
+            BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Locale locale = LocaleContextHolder.getLocale();
         Stream<ValidationErrorItem> objectErrors = ex.getGlobalErrors().stream()
             .map(error -> new ValidationErrorItem("*", messageSource.getMessage(error, locale)));
@@ -68,39 +60,52 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         return handleBindException(ex, headers, status, request);
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    private ResponseEntity<Object> handleUnmappedException(Exception ex) {
+    private ResponseEntity<Object> handleUnmappedException(Exception ex, WebRequest request) {
         ResponseStatus responseStatus = AnnotatedElementUtils
             .findMergedAnnotation(ex.getClass(), ResponseStatus.class);
         HttpStatus status = responseStatus != null
             ? responseStatus.value()
             : HttpStatus.INTERNAL_SERVER_ERROR;
-        ApiError apiError = ApiError.builder()
-            .type(ex.getClass().getSimpleName())
-//            .title(ex.getClass().getSimpleName())
-            .status(status.value())
-            .detail(ex.getMessage())
-            .instance(UUID.randomUUID().toString())
-            .build();
+        logServerError(ex, status, request);
+        ApiError apiError = createApiError(ex, status);
         return new ResponseEntity<>(apiError, status);
     }
 
     @ExceptionHandler(ResponseStatusException.class)
     @ResponseBody
-    private ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex) {
+    private ResponseEntity<Object> handleResponseStatusException(
+            ResponseStatusException ex, WebRequest request) {
         HttpStatus status = ex.getStatus();
-        ApiError apiError = ApiError.builder()
+        logServerError(ex, status, request);
+        ApiError apiError = createApiError(ex, status);
+        return new ResponseEntity<>(apiError, status);
+    }
+
+    private ApiError createApiError(Exception ex, HttpStatus status) {
+        return ApiError.builder()
             .type(ex.getClass().getSimpleName())
 //            .title(ex.getClass().getSimpleName())
             .status(status.value())
             .detail(ex.getMessage())
             .instance(UUID.randomUUID().toString())
             .build();
-        return new ResponseEntity<>(apiError, status);
+    }
+
+    private void logServerError(Exception ex, HttpStatus status, WebRequest request) {
+        if (status.is4xxClientError()) {
+            String message = "Request [%s] resulted in response [%s]".formatted(request, status);
+            logger.info(message);
+        } else if (status.is5xxServerError()) {
+            String message = "Request [%s] resulted in response [%s] with exception: %s"
+                .formatted(request, status, ex);
+            logger.error(message, ex);
+        }
     }
 }
