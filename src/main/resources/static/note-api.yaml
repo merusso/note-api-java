@@ -2,7 +2,7 @@
 openapi: '3.0.3'
 info:
   title: Note API
-  version: '0.0.6'
+  version: '0.0.7'
 servers:
   - url: http://localhost:8080
     description: local
@@ -14,8 +14,7 @@ paths:
         - in: query
           name: userId
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '200':
           description: OK
@@ -129,15 +128,15 @@ components:
       in: path
       required: true
       schema:
-        type: integer
-        format: int64
+        type: string
+        example: '621a80c50f239c6d37c6313b'
     userId:
       name: userId
       in: path
       required: true
       schema:
-        type: integer
-        format: int64
+        type: string
+        example: '621a80c50f239c6d37c6313b'
   responses:
     error:
       description: 'Server error'
@@ -212,14 +211,12 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
           readOnly: true
-          example: 123456
+          example: '621a80c50f239c6d37c6313b'
         userId:
-          type: integer
-          format: int64
-          example: 123456
+          type: string
+          example: '621a80c50f239c6d37c6313b'
         title:
           type: string
           example: 2022 Hawaii
@@ -259,10 +256,9 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
           readOnly: true
-          example: 123456
+          example: '621a80c50f239c6d37c6313b'
         name:
           type: string
           example: ndrake
