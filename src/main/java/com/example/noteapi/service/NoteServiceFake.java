@@ -1,7 +1,6 @@
 package com.example.noteapi.service;
 
 import com.example.noteapi.api.Note;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -9,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Component
+//@Component
 public class NoteServiceFake implements NoteService {
 
     private AtomicLong idGenerator = new AtomicLong();
