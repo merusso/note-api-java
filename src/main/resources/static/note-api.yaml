@@ -2,7 +2,9 @@
 openapi: '3.0.3'
 info:
   title: Note API
-  version: '0.0.7'
+  version: '0.0.9'
+  description: |
+    The Note API is an API to store, retrieve text-based notes.
 servers:
   - url: http://localhost:8080
     description: local
@@ -232,7 +234,8 @@ components:
           example: '2022-02-14T01:02:03Z'
         labels:
           type: array
-          format: string
+          items:
+            type: string
           example:
             - favorites
             - vacations
@@ -268,5 +271,6 @@ components:
           example: '2022-02-14T01:02:03Z'
         noteLabels:
           type: array
-          format: string
+          items:
+            type: string
           example: [favorites,vacations]
