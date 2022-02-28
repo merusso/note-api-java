@@ -3,12 +3,14 @@ package com.example.noteapi.service;
 import com.example.noteapi.api.User;
 import com.example.noteapi.data.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.Optional;
 
 @Component
+@Profile("live")
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 

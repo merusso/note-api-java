@@ -1,6 +1,8 @@
 package com.example.noteapi.service;
 
 import com.example.noteapi.api.User;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -12,7 +14,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
-//@Component
+@Component
+@Profile("fake")
 public class UserServiceFake implements UserService {
 
     private AtomicLong idGenerator = new AtomicLong();

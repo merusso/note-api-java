@@ -4,12 +4,14 @@ import com.example.noteapi.api.Note;
 import com.example.noteapi.data.NoteRepository;
 import com.example.noteapi.data.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.time.Instant;
 
 @Component
+@Profile("live")
 @AllArgsConstructor
 public class NoteServiceImpl implements NoteService {
 

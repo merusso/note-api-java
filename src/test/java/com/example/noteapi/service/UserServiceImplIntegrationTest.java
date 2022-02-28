@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.util.List;
 
 @DataMongoTest
+@ActiveProfiles("live")
 @Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserServiceImplIntegrationTest {
