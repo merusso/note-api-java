@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 sourceCompatibility = '17'
 
 configurations {
@@ -32,6 +32,10 @@ dependencies {
     testImplementation "org.testcontainers:junit-jupiter:1.16.3"
     testImplementation "org.testcontainers:mongodb:1.16.3"
 }
+
+// Remove version from Jar name
+// Ex: note-api-0.0.1.jar -> note-api.jar
+bootJar.getArchiveVersion().set('')
 
 tasks.named('test') {
     useJUnitPlatform()
