@@ -25,3 +25,16 @@ Testing tools:
   * @WebMvcTest
   * @JsonTest
   * @DataMongoTest
+
+## Building the Application
+
+Build dependencies:
+
+* Java 17 JDK
+* Docker - used for Testcontainers integration tests
+
+To build the application, run `./gradlew build`.
+
+## Running the Application
+
+To run the application, use `java -jar build/libs/note-api.jar`
