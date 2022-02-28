@@ -37,4 +37,17 @@ To build the application, run `./gradlew build`.
 
 ## Running the Application
 
+Runtime dependencies:
+
+* Java 17
+* MongoDB
+
 To run the application, use `java -jar build/libs/note-api.jar`
+
+### MongoDB
+
+The application is automatically configured to communicate with a local MongoDB
+instance running on localhost:27017.
+
+You can start up a local MongoDB instance using the provided docker-compose.yaml
+file, via `docker-compose up -d`
