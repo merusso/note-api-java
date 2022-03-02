@@ -1,6 +1,8 @@
 package com.example.noteapi.service;
 
 import com.example.noteapi.api.Note;
+import com.example.noteapi.api.NoteSearchRequest;
+import com.example.noteapi.api.PageResponse;
 import com.example.noteapi.data.NoteRepository;
 import com.example.noteapi.data.User;
 import com.example.noteapi.data.UserRepository;
@@ -43,6 +45,7 @@ class NoteServiceImplIntegrationTest {
     }
 
     static String createdNoteId;
+    static String createdUserId;
 
     @Autowired
     NoteRepository noteRepository;
@@ -61,10 +64,10 @@ class NoteServiceImplIntegrationTest {
     @Order(1)
     void create() {
         User dataUser = new User();
-        String userId = userRepository.save(dataUser).id;
+        createdUserId = userRepository.save(dataUser).id;
 
         Note note = new Note();
-        note.setUserId(userId);
+        note.setUserId(createdUserId);
         note.setTitle("Title");
         note.setContent("Content");
         note.setLabels(List.of("favorites"));
@@ -91,6 +94,24 @@ class NoteServiceImplIntegrationTest {
 
     @Test
     @Order(3)
+    void search() {
+        NoteSearchRequest request = new NoteSearchRequest();
+        request.setUserId(createdUserId);
+        request.setTitle("itl"); // contains match for "Title"
+
+        PageResponse<Note> page = service.search(request);
+
+        assertThat(page.getPageSize()).isEqualTo(20);
+        assertThat(page.getPageToken()).isEqualTo("0");
+        assertThat(page.getNextPageToken()).isEqualTo("1");
+        assertThat(page.getItems()).hasSize(1);
+        Note note = page.getItems().iterator().next();
+        assertThat(note.getId()).isEqualTo(createdNoteId);
+        assertThat(note.getUserId()).isEqualTo(createdUserId);
+    }
+
+    @Test
+    @Order(4)
     void update() {
         Note note = service.get(createdNoteId);
         note.setLabels(List.of("test"));
@@ -101,7 +122,7 @@ class NoteServiceImplIntegrationTest {
     }
 
     @Test
-    @Order(4)
+    @Order(Order.DEFAULT) // should run last
     void delete() {
         service.delete(createdNoteId);
 

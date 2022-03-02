@@ -31,6 +31,40 @@ class NoteControllerTest {
     NoteService noteService;
 
     @Test
+    void searchNote() throws Exception {
+        NoteSearchRequest request = new NoteSearchRequest();
+        request.setUserId("2");
+        request.setTitle("Title");
+        request.setLabel("label-1");
+        PageResponse<Note> notePage = new PageResponse<>(List.of(note()), 20, "1", "2");
+        when(noteService.search(request)).thenReturn(notePage);
+
+        String responseJson = """
+            {
+                "items": [{
+                    "id": "1",
+                    "userId": "2",
+                    "title": "Title",
+                    "content": "Content",
+                    "createdDate": "2022-02-18T18:00:00Z",
+                    "updatedDate": "2022-02-18T18:00:00Z",
+                    "labels": ["label-1", "label-2"]
+                }],
+                "pageSize": 20,
+                "pageToken": "1",
+                "nextPageToken": "2"
+            }
+            """;
+        mockMvc.perform(get("/notes")
+                .queryParam("userId", "2")
+                .queryParam("title", "Title")
+                .queryParam("label", "label-1"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(responseJson));
+    }
+
+    @Test
     void createNote() throws Exception {
         when(noteService.create(any())).thenReturn(note());
 

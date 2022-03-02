@@ -1,13 +1,18 @@
 package com.example.noteapi.service;
 
 import com.example.noteapi.api.Note;
+import com.example.noteapi.api.NoteSearchRequest;
+import com.example.noteapi.api.PageResponse;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
@@ -60,5 +65,25 @@ public class NoteServiceFake implements NoteService {
             throw new NoteNotFoundException(id);
         }
         notes.remove(id);
+    }
+
+    @Override
+    public PageResponse<Note> search(NoteSearchRequest request) {
+        List<Note> items = this.notes.values().stream()
+            .filter(note -> Optional.ofNullable(request.getUserId())
+                .filter(StringUtils::hasLength)
+                .map(val -> val.equals(note.getUserId()))
+                .orElse(true))
+            .filter(note -> Optional.ofNullable(request.getTitle())
+                .filter(StringUtils::hasLength)
+                .map(val -> val.equals(note.getTitle()))
+                .orElse(true))
+            .filter(note -> Optional.ofNullable(request.getLabel())
+                .filter(StringUtils::hasLength)
+                .map(val -> Optional.ofNullable(note.getLabels()).orElse(Collections.emptyList())
+                    .contains(val))
+                .orElse(true))
+            .toList();
+        return new PageResponse<>(items, request.getPageSize(), null, null);
     }
 }

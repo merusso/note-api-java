@@ -22,6 +22,11 @@ public class NoteController {
 
     private NoteService noteService;
 
+    @GetMapping
+    public PageResponse<Note> search(NoteSearchRequest request) {
+        return noteService.search(request);
+    }
+
     @PostMapping
     public Note create(@RequestBody @Valid Note note) {
         return noteService.create(note);
