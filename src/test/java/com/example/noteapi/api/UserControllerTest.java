@@ -41,7 +41,7 @@ class UserControllerTest {
             """;
         String responseJson = """
             {
-                "id": "1",
+                "id": "621e25d546ca105d43d1d073",
                 "name": "ndrake",
                 "joinDate": "2022-02-18T18:00:00Z"
             }
@@ -81,16 +81,16 @@ class UserControllerTest {
 
     @Test
     void getUser() throws Exception {
-        when(userService.get("1")).thenReturn(user());
+        when(userService.get("621e25d546ca105d43d1d073")).thenReturn(user());
 
         String json = """
             {
-                "id": "1",
+                "id": "621e25d546ca105d43d1d073",
                 "name": "ndrake",
                 "joinDate": "2022-02-18T18:00:00Z",
                 "noteLabels": ["favorites", "vacations"]
             }""";
-        mockMvc.perform(get("/users/1"))
+        mockMvc.perform(get("/users/621e25d546ca105d43d1d073"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(content().json(json));
@@ -118,12 +118,12 @@ class UserControllerTest {
 
         String json = """
             {
-                "id": "1",
+                "id": "621e25d546ca105d43d1d073",
                 "name": "ndrake",
                 "joinDate": "2022-02-18T18:00:00Z",
                 "noteLabels": ["favorites", "vacations"]
             }""";
-        mockMvc.perform(put("/users/1")
+        mockMvc.perform(put("/users/621e25d546ca105d43d1d073")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
             .andExpect(status().isOk())
@@ -133,9 +133,9 @@ class UserControllerTest {
 
     @Test
     void deleteUser() throws Exception {
-        mockMvc.perform(delete("/users/1"))
+        mockMvc.perform(delete("/users/621e25d546ca105d43d1d073"))
             .andExpect(status().isOk());
-        verify(userService).delete("1");
+        verify(userService).delete("621e25d546ca105d43d1d073");
     }
 
     private User user() {
@@ -145,7 +145,7 @@ class UserControllerTest {
                 ZoneId.of("US/Central"))
             .toInstant();
         User user = new User();
-        user.setId("1");
+        user.setId("621e25d546ca105d43d1d073");
         user.setName("ndrake");
         user.setJoinDate(date);
         user.setNoteLabels(List.of("favorites", "vacations"));
