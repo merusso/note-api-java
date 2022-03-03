@@ -33,22 +33,22 @@ class NoteControllerTest {
     @Test
     void searchNote() throws Exception {
         NoteSearchRequest request = new NoteSearchRequest();
-        request.setUserId("2");
-        request.setTitle("Title");
-        request.setLabel("label-1");
+        request.setUserId("621a80c50f239c6d37c6313b");
+        request.setTitle("2022 Hawaii");
+        request.setLabel("favorites");
         PageResponse<Note> notePage = new PageResponse<>(List.of(note()), 20, "1", "2");
         when(noteService.search(request)).thenReturn(notePage);
 
         String responseJson = """
             {
                 "items": [{
-                    "id": "1",
-                    "userId": "2",
-                    "title": "Title",
+                    "id": "621a80c50f239c6d37c6313b",
+                    "userId": "621e25d546ca105d43d1d073",
+                    "title": "2022 Hawaii",
                     "content": "Content",
                     "createdDate": "2022-02-18T18:00:00Z",
                     "updatedDate": "2022-02-18T18:00:00Z",
-                    "labels": ["label-1", "label-2"]
+                    "labels": ["favorites", "vacations"]
                 }],
                 "pageSize": 20,
                 "pageToken": "1",
@@ -56,9 +56,9 @@ class NoteControllerTest {
             }
             """;
         mockMvc.perform(get("/notes")
-                .queryParam("userId", "2")
-                .queryParam("title", "Title")
-                .queryParam("label", "label-1"))
+                .queryParam("userId", "621a80c50f239c6d37c6313b")
+                .queryParam("title", "2022 Hawaii")
+                .queryParam("label", "favorites"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(content().json(responseJson));
@@ -70,20 +70,20 @@ class NoteControllerTest {
 
         String requestJson = """
             {
-                "userId": "2",
-                "title": "Title",
+                "userId": "621e25d546ca105d43d1d073",
+                "title": "2022 Hawaii",
                 "content": "Content",
-                "labels": ["label-1", "label-2"]
+                "labels": ["favorites", "vacations"]
             }""";
         String responseJson = """
             {
-                "id": "1",
-                "userId": "2",
-                "title": "Title",
+                "id": "621a80c50f239c6d37c6313b",
+                "userId": "621e25d546ca105d43d1d073",
+                "title": "2022 Hawaii",
                 "content": "Content",
                 "createdDate": "2022-02-18T18:00:00Z",
                 "updatedDate": "2022-02-18T18:00:00Z",
-                "labels": ["label-1", "label-2"]
+                "labels": ["favorites", "vacations"]
             }""";
         mockMvc.perform(post("/notes")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -97,7 +97,7 @@ class NoteControllerTest {
     void createNote_invalidRequest() throws Exception {
         String requestJson = """
             {
-                "title": "Title",
+                "title": "2022 Hawaii",
                 "labels": ["label-1", "label-2"]
             }""";
         String responseJson = """
@@ -124,19 +124,19 @@ class NoteControllerTest {
 
     @Test
     void getNote() throws Exception {
-        when(noteService.get("1")).thenReturn(note());
+        when(noteService.get("621a80c50f239c6d37c6313b")).thenReturn(note());
 
         String json = """
             {
-                "id": "1",
-                "userId": "2",
-                "title": "Title",
+                "id": "621a80c50f239c6d37c6313b",
+                "userId": "621e25d546ca105d43d1d073",
+                "title": "2022 Hawaii",
                 "content": "Content",
                 "createdDate": "2022-02-18T18:00:00Z",
                 "updatedDate": "2022-02-18T18:00:00Z",
-                "labels": ["label-1", "label-2"]
+                "labels": ["favorites", "vacations"]
             }""";
-        mockMvc.perform(get("/notes/1"))
+        mockMvc.perform(get("/notes/621a80c50f239c6d37c6313b"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(content().json(json));
@@ -166,15 +166,15 @@ class NoteControllerTest {
 
         String json = """
             {
-                "id": "1",
-                "userId": "2",
-                "title": "Title",
+                "id": "621a80c50f239c6d37c6313b",
+                "userId": "621e25d546ca105d43d1d073",
+                "title": "2022 Hawaii",
                 "content": "Content",
                 "createdDate": "2022-02-18T18:00:00Z",
                 "updatedDate": "2022-02-18T18:00:00Z",
-                "labels": ["label-1", "label-2"]
+                "labels": ["favorites", "vacations"]
             }""";
-        mockMvc.perform(put("/notes/1")
+        mockMvc.perform(put("/notes/621a80c50f239c6d37c6313b")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
             .andExpect(status().isOk())
@@ -184,9 +184,9 @@ class NoteControllerTest {
 
     @Test
     void deleteNote() throws Exception {
-        mockMvc.perform(delete("/notes/1"))
+        mockMvc.perform(delete("/notes/621a80c50f239c6d37c6313b"))
             .andExpect(status().isNoContent());
-        verify(noteService).delete("1");
+        verify(noteService).delete("621a80c50f239c6d37c6313b");
     }
 
     private Note note() {
@@ -196,13 +196,13 @@ class NoteControllerTest {
                 ZoneId.of("US/Central"))
             .toInstant();
         Note note = new Note();
-        note.setId("1");
-        note.setUserId("2");
-        note.setTitle("Title");
+        note.setId("621a80c50f239c6d37c6313b");
+        note.setUserId("621e25d546ca105d43d1d073");
+        note.setTitle("2022 Hawaii");
         note.setContent("Content");
         note.setCreatedDate(date);
         note.setUpdatedDate(date);
-        note.setLabels(List.of("label-1", "label-2"));
+        note.setLabels(List.of("favorites", "vacations"));
         return note;
     }
 }
