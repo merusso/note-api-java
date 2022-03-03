@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.*;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -53,11 +54,14 @@ class NoteServiceImplIntegrationTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    MongoTemplate template;
+
     NoteServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new NoteServiceImpl(noteRepository, new NoteConverter(), userRepository);
+        service = new NoteServiceImpl(noteRepository, new NoteConverter(), userRepository, template);
     }
 
     @Test
@@ -98,12 +102,13 @@ class NoteServiceImplIntegrationTest {
         NoteSearchRequest request = new NoteSearchRequest();
         request.setUserId(createdUserId);
         request.setTitle("itl"); // contains match for "Title"
+        request.setLabel("favorites");
 
         PageResponse<Note> page = service.search(request);
 
         assertThat(page.getPageSize()).isEqualTo(20);
         assertThat(page.getPageToken()).isEqualTo("0");
-        assertThat(page.getNextPageToken()).isEqualTo("1");
+        assertThat(page.getNextPageToken()).isNull();
         assertThat(page.getItems()).hasSize(1);
         Note note = page.getItems().iterator().next();
         assertThat(note.getId()).isEqualTo(createdNoteId);

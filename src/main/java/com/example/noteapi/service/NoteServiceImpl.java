@@ -7,15 +7,20 @@ import com.example.noteapi.data.NoteRepository;
 import com.example.noteapi.data.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 @Profile("live")
@@ -25,6 +30,7 @@ public class NoteServiceImpl implements NoteService {
     private NoteRepository repository;
     private NoteConverter converter;
     private UserRepository userRepository;
+    private MongoTemplate template;
 
     @Override
     public Note create(Note note) {
@@ -72,19 +78,30 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public PageResponse<Note> search(NoteSearchRequest request) {
+        // Build query
         Pageable requestPageable = Pageable.ofSize(request.getPageSize());
-        var note = new com.example.noteapi.data.Note();
-        note.userId = request.getUserId();
-        note.title = request.getTitle();
-        // Example query only supports exact match for non-strings
-//        note.labels = Optional.ofNullable(request.getLabel())
-//            .stream().toList();
-        ExampleMatcher matcher = ExampleMatcher.matching()
-            .withMatcher("title", match -> match.contains().ignoreCase());
-        var example = Example.of(note, matcher);
+        List<Criteria> criteriaList = new ArrayList<>();
+        Optional.ofNullable(request.getUserId())
+            .map(userId -> Criteria.where("userId").is(userId))
+            .ifPresent(criteriaList::add);
+        Optional.ofNullable(request.getTitle())
+            .map(title -> Criteria.where("title").regex(title, "i"))
+            .ifPresent(criteriaList::add);
+        Optional.ofNullable(request.getLabel())
+            .map(label -> Criteria.where("labels").is(label))
+            .ifPresent(criteriaList::add);
+        Query query = Query.query(new Criteria().andOperator(criteriaList)).with(requestPageable);
 
-        var page = repository.findAll(example, requestPageable);
+        // Run query
+        List<com.example.noteapi.data.Note> dataNotes = template.find(query, com.example.noteapi.data.Note.class);
+        // Convert to Page using count query
+        Page<com.example.noteapi.data.Note> page = PageableExecutionUtils.getPage(
+            dataNotes,
+            requestPageable,
+            () -> template.count(query.with(Pageable.unpaged()), com.example.noteapi.data.Note.class)
+        );
 
+        // Convert to PageResponse
         List<Note> notes = page.get()
             .map(converter::convertReverse)
             .toList();
@@ -92,6 +109,6 @@ public class NoteServiceImpl implements NoteService {
         return new PageResponse<>(notes,
             pageable.getPageSize(),
             Objects.toString(pageable.getPageNumber()),
-            Objects.toString(pageable.next().getPageNumber()));
+            page.hasNext() ? Objects.toString(pageable.next().getPageNumber()) : null);
     }
 }
