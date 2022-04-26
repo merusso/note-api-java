@@ -37,9 +37,7 @@ public class NoteServiceImpl implements NoteService {
         Assert.notNull(note.getUserId(), "Note.userId is required");
 
         var dataNote = converter.convert(note);
-        if (!userRepository.existsById(dataNote.userId)) {
-            throw new UserNotFoundException(dataNote.userId);
-        }
+        assertUserExists(dataNote.userId);
         dataNote.id = null;
         dataNote.createdDate = Instant.now();
         dataNote.updatedDate = dataNote.createdDate;
@@ -56,13 +54,9 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public Note update(Note note) {
-        if (!repository.existsById(note.getId())) {
-            throw new NoteNotFoundException(note.getId());
-        }
+        assertNoteExists(note.getId());
         var dataNote = converter.convert(note);
-        if (!userRepository.existsById(dataNote.userId)) {
-            throw new UserNotFoundException(dataNote.userId);
-        }
+        assertUserExists(dataNote.userId);
         dataNote.updatedDate = Instant.now();
         dataNote = repository.save(dataNote);
         return converter.convertReverse(dataNote);
@@ -70,9 +64,7 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public void delete(String id) {
-        if (!repository.existsById(id)) {
-            throw new NoteNotFoundException(id);
-        }
+        assertNoteExists(id);
         repository.deleteById(id);
     }
 
@@ -110,5 +102,17 @@ public class NoteServiceImpl implements NoteService {
             pageable.getPageSize(),
             Objects.toString(pageable.getPageNumber()),
             page.hasNext() ? Objects.toString(pageable.next().getPageNumber()) : null);
+    }
+
+    private void assertNoteExists(String note) {
+        if (!repository.existsById(note)) {
+            throw new NoteNotFoundException(note);
+        }
+    }
+
+    private void assertUserExists(String userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
+        }
     }
 }

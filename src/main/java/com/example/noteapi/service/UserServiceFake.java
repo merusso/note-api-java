@@ -44,27 +44,27 @@ public class UserServiceFake implements UserService {
 
     @Override
     public User get(String id) {
-        if (!users.containsKey(id)) {
-            throw new NoteNotFoundException(id);
-        }
+        assertUserExists(id);
         return users.get(id);
     }
 
     @Override
     public User update(User user) {
         String id = user.getId();
-        if (!users.containsKey(id)) {
-            throw new NoteNotFoundException(id);
-        }
+        assertUserExists(id);
         users.put(id, user);
         return user;
     }
 
     @Override
     public void delete(String id) {
+        assertUserExists(id);
+        users.remove(id);
+    }
+
+    private void assertUserExists(String id) {
         if (!users.containsKey(id)) {
             throw new NoteNotFoundException(id);
         }
-        users.remove(id);
     }
 }

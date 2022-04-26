@@ -43,27 +43,21 @@ public class NoteServiceFake implements NoteService {
 
     @Override
     public Note get(String id) {
-        if (!notes.containsKey(id)) {
-            throw new NoteNotFoundException(id);
-        }
+        assertNoteExists(id);
         return notes.get(id);
     }
 
     @Override
     public Note update(Note note) {
         String id = note.getId();
-        if (!notes.containsKey(id)) {
-            throw new NoteNotFoundException(id);
-        }
+        assertNoteExists(id);
         notes.put(id, note);
         return note;
     }
 
     @Override
     public void delete(String id) {
-        if (!notes.containsKey(id)) {
-            throw new NoteNotFoundException(id);
-        }
+        assertNoteExists(id);
         notes.remove(id);
     }
 
@@ -85,5 +79,11 @@ public class NoteServiceFake implements NoteService {
                 .orElse(true))
             .toList();
         return new PageResponse<>(items, request.getPageSize(), null, null);
+    }
+
+    private void assertNoteExists(String id) {
+        if (!notes.containsKey(id)) {
+            throw new NoteNotFoundException(id);
+        }
     }
 }

@@ -37,9 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(User user) {
         String id = user.getId();
-        if (!repository.existsById(id)) {
-            throw new UserNotFoundException(id);
-        }
+        assertUserExists(id);
         var dataUser = converter.convert(user);
         dataUser = repository.save(dataUser);
         return converter.convertReverse(dataUser);
@@ -47,9 +45,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(String id) {
+        assertUserExists(id);
+        repository.deleteById(id);
+    }
+
+    private void assertUserExists(String id) {
         if (!repository.existsById(id)) {
             throw new UserNotFoundException(id);
         }
-        repository.deleteById(id);
     }
 }
