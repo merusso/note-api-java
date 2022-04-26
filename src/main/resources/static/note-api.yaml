@@ -2,7 +2,7 @@
 openapi: '3.0.3'
 info:
   title: Note API
-  version: '0.0.13'
+  version: '0.1.0'
   description: |
     The Note API is an API to store, retrieve text-based notes.
 servers:
@@ -78,6 +78,36 @@ paths:
           $ref: '#/components/responses/note'
         default:
           $ref: '#/components/responses/error'
+    patch:
+      summary: Patch note (partial update)
+      parameters:
+        - $ref: '#/components/parameters/noteId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+            example:
+              title: 2022 New York
+              labels: []
+              content: null
+      responses:
+        '200':
+          description: 'Note'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+              example:
+                id: '621a80c50f239c6d37c6313b'
+                userId: '621e25d546ca105d43d1d073'
+                title: 2022 New York
+                createdDate: 2022-02-14T01:02:03Z
+                updatedDate: 2022-02-15T01:02:03Z
+                labels: []
+        default:
+          $ref: '#/components/responses/error'
     delete:
       summary: Delete note
       parameters:
@@ -116,6 +146,34 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/user'
+        default:
+          $ref: '#/components/responses/error'
+    patch:
+      summary: Patch user (partial update)
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            example:
+              name: vsullivan
+      responses:
+        '200':
+          description: 'User'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: 621e25d546ca105d43d1d073
+                name: vsullivan
+                joinDate: '2022-02-14T01:02:03Z'
+                noteLabels:
+                  - favorites
+                  - vacations
         default:
           $ref: '#/components/responses/error'
     delete:
