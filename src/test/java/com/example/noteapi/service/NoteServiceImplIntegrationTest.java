@@ -6,6 +6,8 @@ import com.example.noteapi.api.PageResponse;
 import com.example.noteapi.data.NoteRepository;
 import com.example.noteapi.data.User;
 import com.example.noteapi.data.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.context.*;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -57,11 +60,13 @@ class NoteServiceImplIntegrationTest {
     @Autowired
     MongoTemplate template;
 
+    ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
+
     NoteServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new NoteServiceImpl(noteRepository, new NoteConverter(), userRepository, template);
+        service = new NoteServiceImpl(noteRepository, new NoteConverter(), userRepository, template, objectMapper);
     }
 
     @Test
@@ -124,6 +129,17 @@ class NoteServiceImplIntegrationTest {
         note = service.update(note);
 
         assertThat(note.getLabels()).containsExactly("test");
+    }
+
+    @Test
+    @Order(5)
+    void patch() {
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("title", "2022 New York");
+
+        Note note = service.patch(createdNoteId, objectNode);
+
+        assertThat(note.getTitle()).isEqualTo("2022 New York");
     }
 
     @Test

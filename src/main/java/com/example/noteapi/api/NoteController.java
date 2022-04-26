@@ -1,10 +1,12 @@
 package com.example.noteapi.api;
 
 import com.example.noteapi.service.NoteService;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,6 +43,11 @@ public class NoteController {
     public Note update(@PathVariable String id, @RequestBody @Valid Note note) {
         note.setId(id);
         return noteService.update(note);
+    }
+
+    @PatchMapping("{id}")
+    public Note patch(@PathVariable String id, @RequestBody JsonNode json) {
+        return noteService.patch(id, json);
     }
 
     @DeleteMapping("{id}")

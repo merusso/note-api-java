@@ -5,6 +5,8 @@ import com.example.noteapi.api.NoteSearchRequest;
 import com.example.noteapi.api.PageResponse;
 import com.example.noteapi.data.NoteRepository;
 import com.example.noteapi.data.UserRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,8 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +35,7 @@ public class NoteServiceImpl implements NoteService {
     private NoteConverter converter;
     private UserRepository userRepository;
     private MongoTemplate template;
+    private ObjectMapper objectMapper;
 
     @Override
     public Note create(Note note) {
@@ -60,6 +65,19 @@ public class NoteServiceImpl implements NoteService {
         dataNote.updatedDate = Instant.now();
         dataNote = repository.save(dataNote);
         return converter.convertReverse(dataNote);
+    }
+
+    @Override
+    public Note patch(String id, JsonNode json) {
+        assertNoteExists(id);
+
+        Note note = get(id);
+        try {
+            Note merged = objectMapper.readerForUpdating(note).readValue(json, Note.class);
+            return update(merged);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override

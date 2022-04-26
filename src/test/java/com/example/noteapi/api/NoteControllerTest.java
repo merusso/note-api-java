@@ -183,6 +183,34 @@ class NoteControllerTest {
     }
 
     @Test
+    void patchNote() throws Exception {
+        Note note = note();
+        note.setTitle("2022 New York");
+        when(noteService.patch(eq("621a80c50f239c6d37c6313b"), any())).thenReturn(note);
+
+        String requestJson = """
+            {
+                "title": "2022 New York"
+            }""";
+        String responseJson = """
+            {
+                "id": "621a80c50f239c6d37c6313b",
+                "userId": "621e25d546ca105d43d1d073",
+                "title": "2022 New York",
+                "content": "Content",
+                "createdDate": "2022-02-18T18:00:00Z",
+                "updatedDate": "2022-02-18T18:00:00Z",
+                "labels": ["favorites", "vacations"]
+            }""";
+        mockMvc.perform(patch("/notes/621a80c50f239c6d37c6313b")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(responseJson));
+    }
+
+    @Test
     void deleteNote() throws Exception {
         mockMvc.perform(delete("/notes/621a80c50f239c6d37c6313b"))
             .andExpect(status().isNoContent());
