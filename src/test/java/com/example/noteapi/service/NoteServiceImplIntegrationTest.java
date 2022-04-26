@@ -135,11 +135,11 @@ class NoteServiceImplIntegrationTest {
     @Order(5)
     void patch() {
         ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put("title", "2022 New York");
+        objectNode.put("title", "patch-test");
 
         Note note = service.patch(createdNoteId, objectNode);
 
-        assertThat(note.getTitle()).isEqualTo("2022 New York");
+        assertThat(note.getTitle()).isEqualTo("patch-test");
     }
 
     @Test

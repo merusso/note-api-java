@@ -98,11 +98,11 @@ class UserServiceImplIntegrationTest {
     @Order(3)
     void patch() {
         ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put("name", "vsullivan");
+        objectNode.put("name", "patch-test");
 
         User user = service.patch(createdUserId, objectNode);
 
-        assertThat(user.getName()).isEqualTo("vsullivan");
+        assertThat(user.getName()).isEqualTo("patch-test");
     }
 
     @Test
