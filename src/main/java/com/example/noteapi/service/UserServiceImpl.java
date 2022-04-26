@@ -2,10 +2,14 @@ package com.example.noteapi.service;
 
 import com.example.noteapi.api.User;
 import com.example.noteapi.data.UserRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -16,6 +20,7 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository repository;
     private UserConverter converter;
+    private ObjectMapper objectMapper;
 
     @Override
     public User create(User user) {
@@ -41,6 +46,19 @@ public class UserServiceImpl implements UserService {
         var dataUser = converter.convert(user);
         dataUser = repository.save(dataUser);
         return converter.convertReverse(dataUser);
+    }
+
+    @Override
+    public User patch(String id, JsonNode json) {
+        assertUserExists(id);
+
+        User user = get(id);
+        try {
+            User merged = objectMapper.readerForUpdating(user).readValue(json, User.class);
+            return update(merged);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override

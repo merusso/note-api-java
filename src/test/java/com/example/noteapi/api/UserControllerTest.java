@@ -132,6 +132,31 @@ class UserControllerTest {
     }
 
     @Test
+    void patchUser() throws Exception {
+        User user = user();
+        user.setName("vsullivan");
+        when(userService.patch(eq("621e25d546ca105d43d1d073"), any())).thenReturn(user);
+
+        String requestJson = """
+            {
+                "name": "vsullivan"
+            }""";
+        String responseJson = """
+            {
+                "id": "621e25d546ca105d43d1d073",
+                "name": "vsullivan",
+                "joinDate": "2022-02-18T18:00:00Z",
+                "noteLabels": ["favorites", "vacations"]
+            }""";
+        mockMvc.perform(patch("/users/621e25d546ca105d43d1d073")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(responseJson))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(responseJson));
+    }
+
+    @Test
     void deleteUser() throws Exception {
         mockMvc.perform(delete("/users/621e25d546ca105d43d1d073"))
             .andExpect(status().isOk());

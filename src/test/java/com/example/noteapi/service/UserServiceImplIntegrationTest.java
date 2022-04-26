@@ -2,6 +2,8 @@ package com.example.noteapi.service;
 
 import com.example.noteapi.api.User;
 import com.example.noteapi.data.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.context.*;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -45,11 +48,13 @@ class UserServiceImplIntegrationTest {
     @Autowired
     UserRepository repository;
 
+    ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
+
     UserServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new UserServiceImpl(repository, new UserConverter());
+        service = new UserServiceImpl(repository, new UserConverter(), objectMapper);
     }
 
     @Test
@@ -90,7 +95,18 @@ class UserServiceImplIntegrationTest {
     }
 
     @Test
-    @Order(4)
+    @Order(3)
+    void patch() {
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("name", "vsullivan");
+
+        User user = service.patch(createdUserId, objectNode);
+
+        assertThat(user.getName()).isEqualTo("vsullivan");
+    }
+
+    @Test
+    @Order(value = Order.DEFAULT) // should run last
     void delete() {
         service.delete(createdUserId);
 
